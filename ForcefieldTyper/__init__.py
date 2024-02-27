@@ -1,0 +1,3 @@
+ffDefaultPrm = {
+    'gaff':None
+}
