@@ -57,7 +57,6 @@ class STFragment(STDLMixin):
     def __setstate__(self,state):
         obmol = OBMolConverter.molFromEXYZ(state["exyz"])
         self.obmol = obmol
-        
         self.molgraph = state["graph"]
         self._startSmiles = state["startSmiles"]
         self._startIndices = state["startIndices"]
