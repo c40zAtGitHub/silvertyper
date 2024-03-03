@@ -5,7 +5,9 @@ from silvertyper.Utilities.AtomicMassData import atomSymbols
 
 class STMolConverter:
     @classmethod
-    def fromXYZFile(cls,xyzFileName,chargeFileName=None):
+    def fromXYZFile(cls,xyzFileName,
+                    chargeFileName = None,
+                    perceiveBO = False):
         with open(xyzFileName) as xyz:
             xyzContent = xyz.read()
         xyzObj = XYZFile.fromStream(xyzContent)
@@ -29,7 +31,7 @@ class STMolConverter:
         else:
             charges = None
 
-        stFrag = STFragment(exyzTuples,charges)
+        stFrag = STFragment(exyzTuples,charges=charges,perceiveBO=perceiveBO)
         return stFrag
 
     @classmethod

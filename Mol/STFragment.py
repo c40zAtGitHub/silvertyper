@@ -21,11 +21,12 @@ class STFragment(STDLMixin):
     def __init__(self,
                  exyzTuples,        #list of (aNum,x,y,z) tuple
                  charges = None,    #list of floats of effective atomic charges
-                 startSmiles = None #a smiles code indicating the start of the fragment
+                 startSmiles = None,#a smiles code indicating the start of the fragment
                                     #   used by fragment comparison
+                 perceiveBO = False
                  ):
         #define placeholder variables
-        self.obmol = OBMolConverter.molFromEXYZ(exyzTuples)
+        self.obmol = OBMolConverter.molFromEXYZ(exyzTuples,perceiveBO=perceiveBO)
         self.molgraph = OBMolConverter.graphFromMol(self.obmol)
         self._startSmiles = None
         self._startIndices = None
@@ -56,6 +57,7 @@ class STFragment(STDLMixin):
     def __setstate__(self,state):
         obmol = OBMolConverter.molFromEXYZ(state["exyz"])
         self.obmol = obmol
+        
         self.molgraph = state["graph"]
         self._startSmiles = state["startSmiles"]
         self._startIndices = state["startIndices"]
@@ -70,13 +72,13 @@ class STFragment(STDLMixin):
     
     @startSmiles.setter
     def startSmiles(self,newSmiles):
-        self._startSmiles = None
         if newSmiles is None:
             self._startIndices = None
         else:
             #check if the newSmiles hits certain part of self
             match = self.matchSmiles(newSmiles)
             if len(match) > 0:
+                self._startSmiles = newSmiles
                 self._startIndices = match
             else:
                 raise ValueError("New smiles pattern does not hit the current system")
@@ -94,7 +96,7 @@ class STFragment(STDLMixin):
 
     def subFrag(self,indices):
         newEXYZ = OBMolConverter.subObmolToEXYZ(self.obmol,indices)
-        newCharges = [self.molgraph[i] for i in indices]
+        newCharges = [self.molgraph[i].charge for i in indices]
         newFrag = STFragment(newEXYZ,newCharges)
         return newFrag
 
@@ -132,8 +134,7 @@ class STFragment(STDLMixin):
             selfStIndices = self.matchSmiles(firstSmi)
 
         if len(selfStIndices) == 0:
-            errMsg = "The input smiles pattern does not hit the current system"
-            raise ValueError(errMsg)
+            return False
 
         if firstSmi == otherFrag.startSmiles:
             otherStIndices = otherFrag.startIndices
@@ -141,8 +142,7 @@ class STFragment(STDLMixin):
             otherStIndices = otherFrag.matchSmiles(firstSmi)
 
         if len(otherStIndices) == 0:
-            errMsg = "The input smiles pattern does not hit the input fragment"
-            raise ValueError(errMsg)
+            return False
 
         selfFloodIter = STBFSFloodMGIter(self.molgraph,selfStIndices)
         otherFloodIter = STBFSFloodMGIter(otherFrag.molgraph,otherStIndices)

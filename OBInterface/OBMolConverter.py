@@ -7,19 +7,20 @@ from silvertyper.Mol.STMolGraph import STMolGraph
 
 class OBMolConverter:
     @classmethod
-    def molFromEXYZ(cls,exyzTuples):
+    def molFromEXYZ(cls,exyzTuples,perceiveBO = False):
         obmol = ob.OBMol()
         for exyz in exyzTuples:
             ele,x,y,z = exyz
             atom = obmol.NewAtom()
-
             #convert atom symbol to atomic number
             if type(ele) == str:
                 ele = ob.GetAtomicNum(ele)
-
             atom.SetAtomicNum(ele)
             atom.SetVector(x,y,z)
         obmol.ConnectTheDots()
+        if perceiveBO is True:
+            obmol.PerceiveBondOrders()
+
         return obmol
     
     @classmethod
