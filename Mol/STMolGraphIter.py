@@ -41,6 +41,9 @@ class STBFSFloodMGIter:
         self._dq = deque(startIndices)
         pass
 
+    def __iter__(self):
+        return self
+
     def __next__(self):
         if len(self._dq) == 0:
             raise StopIteration

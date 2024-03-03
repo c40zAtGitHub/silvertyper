@@ -62,14 +62,16 @@ class STFragmentTyper:
     def assignByFragments(self,stmol:STFragment):
         for component in stmol.components:
             cSize = len(component)
-            for frag in self.fragments[cSize]:
-                if component.matchFrag(frag):
-                    fragIter = STBFSFloodMGIter(frag.molgraph,frag.startIndices)
-                    compIndices = component.matchSmiles(frag.startSmiles,parentIndex=True)
-                    compIter = STBFSFloodMGIter(component.molgraph,compIndices)
-                    for atomPair in zip(fragIter,compIter):
-                        fatom,catom = atomPair
-                        catom.type = fatom.type
+            if cSize in self.fragments.keys():
+                for frag in self.fragments[cSize]:
+                    if component.matchFrag(frag):
+                        fragIter = STBFSFloodMGIter(frag.molgraph,frag.startIndices)
+                        compIndices = component.matchSmiles(frag.startSmiles,parentIndex=True)
+                        compIter = STBFSFloodMGIter(component.molgraph,compIndices)
+                        for atomPair in zip(fragIter,compIter):
+                            fatom,catom = atomPair
+                            catom.type = fatom.type
+                            catom.charge = fatom.charge
 
                     
 
