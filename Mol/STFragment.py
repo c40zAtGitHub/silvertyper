@@ -23,7 +23,7 @@ class STFragment(STDLMixin):
                  charges = None,    #list of floats of effective atomic charges
                  startSmiles = None,#a smiles code indicating the start of the fragment
                                     #   used by fragment comparison
-                 perceiveBO = False
+                 perceiveBO = False #auto calculate bond order
                  ):
         #define placeholder variables
         self.obmol = OBMolConverter.molFromEXYZ(exyzTuples,perceiveBO=perceiveBO)

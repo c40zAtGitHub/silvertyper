@@ -7,12 +7,12 @@ from silvertyper.Utilities.AtomicMassData import atomSymbols
 class STAtomEntry:
 
     def __init__(self,
-                 aindex,
+                 anum,
                  atype=None,
                  charge=None,
                  ):
-        self.atomNum = aindex
-        self.atomSymbol = atomSymbols[aindex-1]
+        self.atomNum = anum
+        self.atomSymbol = atomSymbols[anum-1]
         self.type = atype
         
         if charge is None:
