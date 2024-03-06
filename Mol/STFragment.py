@@ -9,7 +9,11 @@
 from silvertyper.Mixins.STDLMixin import STDLMixin
 from silvertyper.OBInterface.OBMolConverter import OBMolConverter
 from silvertyper.OBInterface.OBSmartSearcher import OBSMARTSearcher
+
+from .STFragView import STFragView
 from .STMolGraphIter import STBFSFloodMGIter
+
+
 
 class STFragment(STDLMixin):
     """
@@ -23,10 +27,13 @@ class STFragment(STDLMixin):
                  charges = None,    #list of floats of effective atomic charges
                  startSmiles = None,#a smiles code indicating the start of the fragment
                                     #   used by fragment comparison
+                 perceiveBC = True,
                  perceiveBO = False #auto calculate bond order
                  ):
         #define placeholder variables
-        self.obmol = OBMolConverter.molFromEXYZ(exyzTuples,perceiveBO=perceiveBO)
+        self.obmol = OBMolConverter.molFromEXYZ(exyzTuples,
+                                                perceiveBC=perceiveBC,
+                                                perceiveBO=perceiveBO)
         self.molgraph = OBMolConverter.graphFromMol(self.obmol)
         self._startSmiles = None
         self._startIndices = None
@@ -64,6 +71,10 @@ class STFragment(STDLMixin):
     @property
     def atoms(self):
         return self.molgraph.atoms
+    
+    @property
+    def bonds(self):
+        return self.molgraph.bonds
     
     @property
     def startSmiles(self):
@@ -170,54 +181,8 @@ class STFragment(STDLMixin):
         return ((xmin-margin,ymin-margin,zmin-margin),
                 (xmax+margin,ymax+margin,zmax+margin))
 
-class STFragView:
-    """
-    ST Fragment View class
-    A "view" of a STFragment class
-    """
-    def __init__(self,parent:STFragment,
-                 atomIndices):
-        self.parent = parent
-        self._indices = atomIndices
-        self._vmol = None
 
-    def __getitem__(self,index):
-        pIndex = self._indices[index]
-        return self.parent[pIndex]
-    
-    def __len__(self):
-        return len(self._indices)
 
-    def matchFrag(self,otherFrag):
-        return self.vmol.matchFrag(otherFrag)
-    
-    def matchSmiles(self,smilesPattern,parentIndex = False):
-        indices = self.vmol.matchSmiles(smilesPattern)
-        if parentIndex is True:
-            return [self.pindex[i] for i in indices]
-        else:
-            return indices
-    
-    @property
-    def molgraph(self):
-        return self.parent.molgraph
-    
-    @property
-    def obmol(self):
-        return self.parent.obmol
-    
-    @property
-    def pindex(self):
-        return self._indices
-    
-    def toMol(self):
-        return self.parent.subFrag(self._indices)
-    
-    @property
-    def vmol(self):
-        if self._vmol is None:
-            self._vmol = self.toMol()
-        return self._vmol
 
     
     

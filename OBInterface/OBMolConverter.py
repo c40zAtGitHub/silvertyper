@@ -6,8 +6,12 @@ from openbabel import openbabel as ob
 from silvertyper.Mol.STMolGraph import STMolGraph
 
 class OBMolConverter:
+
     @classmethod
-    def molFromEXYZ(cls,exyzTuples,perceiveBO = False):
+    def molFromEXYZ(cls,exyzTuples,
+                    perceiveBC = True,  #Flag telling if bond connection is to be perceived
+                    perceiveBO = False  #Flag telling if bond order is to be perceived
+                    ):
         obmol = ob.OBMol()
         for exyz in exyzTuples:
             ele,x,y,z = exyz
@@ -17,12 +21,14 @@ class OBMolConverter:
                 ele = ob.GetAtomicNum(ele)
             atom.SetAtomicNum(ele)
             atom.SetVector(x,y,z)
-        obmol.ConnectTheDots()
+
+        if perceiveBC is True:
+            obmol.ConnectTheDots()
+
         if perceiveBO is True:
             obmol.PerceiveBondOrders()
-
         return obmol
-    
+
     @classmethod
     def subObmolToEXYZ(cls,obmol,indices=None):
         if indices is None:

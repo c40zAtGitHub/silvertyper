@@ -1,7 +1,7 @@
 from .STFragment import STFragment
 
 from silvertyper.File import XYZFile
-from silvertyper.Utilities.AtomicMassData import atomSymbols
+
 
 class STMolConverter:
     @classmethod
@@ -11,20 +11,7 @@ class STMolConverter:
         with open(xyzFileName) as xyz:
             xyzContent = xyz.read()
         xyzObj = XYZFile.fromStream(xyzContent)
-        
-        exyzLines = xyzObj.atomCoords.splitlines()
-        exyzTuples = []
-        for line in exyzLines:
-            aSymbol,x,y,z = line.split()
-            try:
-                aNum = int(aSymbol)
-            except ValueError:
-                aNum = atomSymbols.index(aSymbol) + 1
-
-            x = float(x)
-            y = float(y)
-            z = float(z)
-            exyzTuples.append((aNum,x,y,z))
+        exyzTuples = xyzObj.toEXYZTuples()
 
         if chargeFileName is not None:
             charges = cls.readChargeFile(chargeFileName)
