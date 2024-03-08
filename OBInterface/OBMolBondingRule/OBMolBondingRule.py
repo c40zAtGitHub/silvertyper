@@ -6,7 +6,8 @@ class OBMolBondingRule:
     the bond forming behavior of different portion of an obmol system
     """
     def __init__(self):
-        pass
+        self.guessBondCon = True
+        self.guessBondOrder = True
 
     def __con__(self,obatom):
         """
@@ -34,9 +35,10 @@ class OBMolBondingRule:
         Atom indices that participates in bond connection perception
         """
         indices = []
-        for atom in ob.OBMolAtomIter(obmol):
-            if self.__con__(atom):
-                indices.append(atom.GetIdx()-1)
+        if self.guessBondCon is True:
+            for atom in ob.OBMolAtomIter(obmol):
+                if self.__con__(atom):
+                    indices.append(atom.GetIdx()-1)
         return indices
 
     def orderIndices(self,obmol):
@@ -44,9 +46,10 @@ class OBMolBondingRule:
         Atom indices that participates in bond order perception
         """
         indices = []
-        for atom in ob.OBMolAtomIter(obmol):
-            if self.__order__(atom):
-                indices.append(atom.GetIdx()-1)
+        if self.guessBondOrder is True:
+            for atom in ob.OBMolAtomIter(obmol):
+                if self.__order__(atom):
+                    indices.append(atom.GetIdx()-1)
         return indices
     
     def nobondIndices(self,obmol):

@@ -1,3 +1,4 @@
+from silvertyper.Utilities.AtomicMassData import atomSymbols
 from .OBMolBondingRule import OBMolBondingRule as OBMBRule
 
 class OBMBExcludeElement(OBMBRule):
@@ -23,7 +24,8 @@ class OBMBExcludeElement(OBMBRule):
         should be included in atom connection determination
         returns True or False
         """
-        symbol = obatom.GetSymbol()
+        aNum = obatom.GetAtomicNum()
+        symbol = atomSymbols[aNum-1]
         if symbol in self.conElements:
             return False
         else:
@@ -35,7 +37,8 @@ class OBMBExcludeElement(OBMBRule):
         should be included in bond order determination
         returns True or False
         """
-        symbol = obatom.GetSymbol()
+        aNum = obatom.GetAtomicNum()
+        symbol = atomSymbols[aNum-1]
         if symbol in self.orderElements:
             return False
         else:

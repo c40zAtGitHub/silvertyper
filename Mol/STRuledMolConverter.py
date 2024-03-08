@@ -23,16 +23,14 @@ class STRuledMolConverter:
                          perceiveBO=False)
         conIndices = rules.conIndices(mol.obmol)
         conView = mol.subView(conIndices)
-        conView.vmol.ConnectTheDots()
+        conView.vmol.obmol.ConnectTheDots()
         conView.syncVmol()
 
         orderIndices = rules.orderIndices(mol.obmol)
-        orderView = mol.subView(conIndices)
-        orderView.vmol.ConnectTheDots()
-        orderView.vmol.PerceiveBondOrder()
-        conView.vmol.ConnectTheDots()
-        conView.syncVmol()
-
+        orderView = mol.subView(orderIndices)
+        orderView.vmol.obmol.ConnectTheDots()
+        orderView.vmol.obmol.PerceiveBondOrders()
+        orderView.syncVmol()
         return mol
 
 

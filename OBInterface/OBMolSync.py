@@ -33,9 +33,11 @@ class OBMolSyncronizer:
             for sbond in ob.OBMolBondIter(self._smol):
                 satom1 = sbond.GetBeginAtom()
                 satom2 = sbond.GetEndAtom()
+                sbondOrder = sbond.GetBondOrder()
                 datom1 = self.destAtom(satom1)
                 datom2 = self.destAtom(satom2)
-                dbond = self._dmol.AddBond(datom1,datom2)
-                sbondOrder = sbond.GetBondOrder()
-                dbond.SetBondOrder(sbondOrder)
+                self._dmol.AddBond(datom1.GetIdx(),
+                                   datom2.GetIdx(),
+                                   sbondOrder)
+
 
