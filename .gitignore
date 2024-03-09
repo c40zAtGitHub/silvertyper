@@ -1,4 +1,4 @@
 silvertyper.code-workspace
 .gitignore
 **/__pycache__/
-silvertyper/ForcefieldTyper/GAFF/GAFFParaDictOld.py
+ignore/*

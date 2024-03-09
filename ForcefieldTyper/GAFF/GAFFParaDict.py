@@ -14,7 +14,7 @@ class GAFFParameterDict(STBADIDict):
         self.sectionOfKeyLength[1] = ['vdw']
 
     @classmethod
-    def fromDatFile(cls,parameterFile):
+    def fromFile(cls,fileName):
         #parse the gaff.dat file
         #atom types (atomType, atomicMass in amu, polarizability in A3)
         #bond - in (key, force constant in kcal/mol/A2, re in A)
@@ -30,7 +30,7 @@ class GAFFParameterDict(STBADIDict):
         #       the pairwise re and epsilon is combined as
         #       re_ij = 1/2 * (re_i + re_j);    eps_ij = sqrt(eps_i*eps_j)
         #       see https://ambermd.org/vdwequation.pdf for details
-        with open(parameterFile) as gaffdat:
+        with open(fileName) as gaffdat:
             gaffdatContent = gaffdat.read()
         gaffSection = gaffdatContent.split('\n\n') #sections are separated by blank lines
         gaffSection = [section.strip() for section in gaffSection]
@@ -116,5 +116,5 @@ class GAFFParameterDict(STBADIDict):
         else:
             gaffkey = GAFFKey('-'.join(key))
 
-        result = super().find(key)
+        result = super().find(gaffkey)
         return result
