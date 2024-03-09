@@ -20,13 +20,13 @@ class FFAtomType:
         return self._type
     
     def __eq__(self,otherType):
-        return self.matches(otherType)
+        return self.match(otherType)
     
     def isExactly(self,otherType):
         #is exactly means NO wildcard match
         return self._type == otherType._type
 
-    def matches(self,otherType):
+    def match(self,otherType):
         if self.isWildcard or otherType.isWildcard:
             return True
         elif self._type == otherType._type:
@@ -53,7 +53,7 @@ class STFFKey:
         return hash(self._elements)
 
     def __eq__(self,otherkey):
-        return self.matches(otherkey)
+        return self.match(otherkey)
         
     def __len__(self):
         return self._length
@@ -68,7 +68,7 @@ class STFFKey:
     def isExactly(self,otherkey):
         return self._elements == otherkey._elements
     
-    def matches(self,otherkey):
+    def match(self,otherkey):
         if self._length == otherkey._length:
             isSame = compareArray(self._elements,otherkey._elements)
             isSameReverse = compareArray(self._elements,reversed(otherkey._elements))

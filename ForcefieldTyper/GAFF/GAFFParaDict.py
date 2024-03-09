@@ -1,25 +1,17 @@
 from .GAFFKey import GAFFKey
+from silvertyper.ForcefieldTyper.Dict.STBADIDict import STBADIDict
 
-class GAFFParameterDict:
+class GAFFParameterDict(STBADIDict):
     #a static class that defines
     #   the interaction between various atom types
     def __init__(self,typeDict,
                  bondDict,angleDict,dihedralDict,improperDict,vdwDict):
+        super().__init__(bondDict,angleDict,dihedralDict,improperDict)
         #GAFF component
         #Bond Angle Dihedral Improper vdw
         self.atomTypes = typeDict
-        self.bondPara = bondDict
-        self.anglePara = angleDict
-        self.dihedralPara = dihedralDict
-        self.improperPara = improperDict
-        self.vdwPara = vdwDict
-
-        self._dictOfKeyLength = {
-            1:self.vdwPara,
-            2:self.bondPara,
-            3:self.anglePara,
-            4:self.dihedralPara
-        }
+        self.section['vdw'] = vdwDict
+        self.sectionOfKeyLength[1] = ['vdw']
 
     @classmethod
     def fromDatFile(cls,parameterFile):
@@ -115,7 +107,7 @@ class GAFFParameterDict:
 
         return cls(typeDict,bondDict,angleDict,dihedralDict,improperDict,vdwDict)
 
-    def find(self,key,improper=False):
+    def find(self,key):
         #if find an entry, return entry
         #if multiple entry hits, find the one that has least wild cards
         #otherwise return none
@@ -124,43 +116,5 @@ class GAFFParameterDict:
         else:
             gaffkey = GAFFKey('-'.join(key))
 
-        keyLength = len(gaffkey)
-        if improper is False:
-            desigDict = self._dictOfKeyLength[keyLength]
-        else:
-            desigDict = self.improperPara
-
-        paraToReturn = None
-        for key in desigDict.keys():
-            if gaffkey.matches(key):
-                if key.hasWildcard:
-                    paraToReturn = desigDict[key]
-                else:
-                    return desigDict[key]
-        return paraToReturn
-    
-    @property
-    def bonds(self):
-        for key in self.bondPara.keys():
-            yield (str(key),self.bondPara[key])
-
-    @property
-    def angles(self):
-        for key in self.anglePara.keys():
-            yield (str(key),self.anglePara[key])
-
-    @property
-    def dihedrals(self):
-        for key in self.dihedralPara.keys():
-            yield (str(key),self.dihedralPara[key])
-
-    @property
-    def impropers(self):
-        for key in self.improperPara.keys():
-            yield (str(key),self.improperPara[key])
-
-    @property
-    def vdw(self):
-        for key in self.vdwPara.keys():
-            yield (str(key),self.vdwPara[key])
-
+        result = super().find(key)
+        return result
