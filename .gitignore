@@ -1,1 +1,3 @@
 silvertyper.code-workspace
+silvertyper.gitignore
+**/__pycache__/

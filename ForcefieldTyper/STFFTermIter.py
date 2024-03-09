@@ -5,10 +5,10 @@ class STFFIter(BondIterMixin,
               AngleIterMixin,
               DihedralIterMixin,
               ImpTorsionIterMixin):
-    def __init__(self,mol):
+    def __init__(self,stmol):
         super().__init__()
-        self.mol = mol
-        self.graph = mol.molgraph
+        self.mol = stmol
+        self.graph = stmol.molgraph
         #mol should have info on atom, GAFF_Atype, connectivity graph
 
     @property

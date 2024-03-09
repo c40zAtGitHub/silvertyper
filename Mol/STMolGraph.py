@@ -14,6 +14,7 @@ class STAtomEntry:
         self.atomNum = anum
         self.atomSymbol = atomSymbols[anum-1]
         self.type = atype
+        self.ffname = None
         
         if charge is None:
             self.charge = 0.0

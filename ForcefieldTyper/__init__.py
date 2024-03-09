@@ -1,3 +1,4 @@
 ffDefaultPrm = {
-    'gaff':None
+    'gaff':{'name':'gaff',
+            'dict':None}
 }

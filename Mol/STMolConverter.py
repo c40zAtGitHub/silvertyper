@@ -30,7 +30,7 @@ class STMolConverter:
         return chargeList
 
     @classmethod
-    def toLAMMPSData(cls,stmol):
+    def toLAMMPSData(cls,stfrag):
         pass
 
     @classmethod

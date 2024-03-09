@@ -10,7 +10,8 @@ if TYPE_CHECKING:
     from silvertyper.Mol.STFragment import STFragment
 
 class STForcefieldTyper:
-    def __init__(self,smartsDict):
+    def __init__(self,ffname,smartsDict):
+        self._ffname = ffname
         self._smdict = smartsDict
 
     @classmethod
@@ -18,12 +19,15 @@ class STForcefieldTyper:
         if forcefield is None:
             return None
         elif forcefield in ffDefaultPrm.keys():
-            return cls(ffDefaultPrm[forcefield])
+            ffname = ffDefaultPrm[forcefield]["name"]
+            ffdict = ffDefaultPrm[forcefield]["dict"]
+            return cls(ffname,ffdict)
         else:
             raise ValueError("Forcefield {} not found".format(forcefield))
 
     def assignAtomType(self,stmol):
         molSearcher = OBSMARTSearcher(stmol.obmol)
+        ffname = self._ffname
         for smEntry in self._smdict:
             smPattern  = smEntry.pattern
             smATypes = smEntry.atomTypes
@@ -34,6 +38,7 @@ class STForcefieldTyper:
                         #atype = smATypes[index]
                         #stmol[aindex].type = atype
                         try:
+                            stmol[aindex].ffname = ffname
                             stmol[aindex].type = smATypes[index]
                         except IndexError:
                             break
@@ -72,6 +77,7 @@ class STFragmentTyper:
                             fatom,catom = atomPair
                             catom.type = fatom.type
                             catom.charge = fatom.charge
+                            catom.ffname = fatom.ffname
 
                     
 

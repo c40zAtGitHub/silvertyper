@@ -43,10 +43,38 @@ Impropers
 
 """
 
-def __init__(self):
+def __init__(self,refDicts):
+    self.aTypes = []
+    self.atoms = []
+    self.bonds = []
+    self.angles = []
+    self.dihedrals = []
+    self.impropers = []
+    self.vdws = []
+
+def __str__(self):
     pass
+
+def addAtom(self,atom):
+    pass
+
+def addBond(self,bond):
+    pass
+
+def addAngle(self,angle):
+    pass
+
+def addDihedral(self,dihedral):
+    pass
+
+def addImproper(self,improper):
+    pass
+
+def addVdw(self,vdw):
+    pass
+
+    
 
 @classmethod
 def fromSTFragment(cls,stFrag):
-    #
     pass
