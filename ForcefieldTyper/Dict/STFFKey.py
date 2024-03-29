@@ -1,3 +1,5 @@
+from .STFFAtomTypeLabel import STFFAtomTypeLabel as AtomTypeLabel
+
 def compareArray(arr1,arr2):
     result = True
     for pair in zip(arr1,arr2):
@@ -5,47 +7,13 @@ def compareArray(arr1,arr2):
             result = False
             break
     return result
-
-class FFAtomType:
-    def __init__(self,typeStr):
-        self._type = typeStr
-
-    def __hash__(self):
-        return hash(self._type)
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        return self._type
-    
-    def __eq__(self,otherType):
-        return self.match(otherType)
-    
-    def isExactly(self,otherType):
-        #is exactly means NO wildcard match
-        return self._type == otherType._type
-
-    def match(self,otherType):
-        if self.isWildcard or otherType.isWildcard:
-            return True
-        elif self._type == otherType._type:
-            return True
-        else:
-            return False 
-    
-    @property
-    def isWildcard(self):
-        #definition of wildcard is forcefield specific
-        return False
     
 class STFFKey:
-    def __init__(self,key):
-        #key is a series of symbols connected by dashes ('-')
-        keyElements = key.split('-')
-        self._elements = tuple([FFAtomType(ele.strip()) for ele in keyElements])
+    def __init__(self,keyElements,Label = AtomTypeLabel):
+        self._Label = Label
+        self._elements = tuple([self._Label(ele.strip()) for ele in keyElements])
         self._length = len(self._elements)
-
+        
     def __str__(self):
         return '-'.join([str(ele) for ele in self._elements])
 
@@ -57,6 +25,16 @@ class STFFKey:
         
     def __len__(self):
         return self._length
+    
+    @classmethod
+    def fromString(cls,string):
+        """
+        Construct STFFKey instances from strings
+        like "a-b-c-d"
+        """
+        atomTypesStrs = string.split('-')
+        newKey = cls(atomTypesStrs)
+        return newKey
     
     @property
     def hasWildcard(self):

@@ -1,8 +1,8 @@
 from .BaseDataEntry import BaseDataEntry
 
 class ChargeEntry(BaseDataEntry):
-    def __init__(self, atomID, atomType, q, x, y, z):
-        super().__init__(atomID, atomType, x, y, z)
+    def __init__(self, atomID, atomTypeID, q, x, y, z):
+        super().__init__(atomID, atomTypeID, x, y, z)
         self.charge = q
 
     @property

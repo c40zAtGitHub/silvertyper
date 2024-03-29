@@ -1,7 +1,46 @@
 from .GAFFKey import GAFFKey
-from silvertyper.ForcefieldTyper.Dict.STBADIDict import STBADIDict
+from silvertyper.ForcefieldTyper.Dict.STBadiDict import STParaDictEntry,STBadiDict
 
-class GAFFParameterDict(STBADIDict):
+def line2Dict(lines:list[str],
+              head:int,
+              lineProcFunc,
+              duplicateLines = False):
+    """
+    Routine to convert lines of .dat content to
+    preferred dictinary objects
+    lines           - list of lines for each section
+    head            - length of key section
+    lineProcFunc    - process function that converts each
+                      line element to its proper format
+    duplicateLines  - a flag that indicates if one key hits
+                      multiple lines 
+    """
+    lineDict = {}
+    lineNumOffset = 0
+    for lineNum,line in enumerate(lines):
+        lineNum -= lineNumOffset
+        keyStr = line[:head]
+        otherElements = line[head:].split()
+        allElements = list(keyStr) + otherElements
+        lineItems = lineProcFunc(allElements)
+        key = lineItems[0]
+        para = tuple(lineItems[1:])
+        if duplicateLines is False:
+            lineDict[key] = STParaDictEntry(lineNum,key,para)
+        elif key in lineDict.keys():
+            lineNumOffset += 1
+            if type(lineDict[key].para) is dict:
+                lineDict[key].para.append(para)
+            else:
+                firstPara = lineDict[key].para
+                lineDict[key].para = [firstPara,para]
+        else:
+            lineDict[key] = STParaDictEntry(lineNum,key,para)
+            
+    return lineDict
+
+
+class GAFFParameterDict(STBadiDict):
     #a static class that defines
     #   the interaction between various atom types
     def __init__(self,typeDict,
@@ -9,9 +48,10 @@ class GAFFParameterDict(STBADIDict):
         super().__init__(bondDict,angleDict,dihedralDict,improperDict)
         #GAFF component
         #Bond Angle Dihedral Improper vdw
-        self.atomTypes = typeDict
+        self.section['atom'] = typeDict
         self.section['vdw'] = vdwDict
-        self.sectionOfKeyLength[1] = ['vdw']
+        self.sectionOfKeyLength[1] = ['atom','vdw']
+        self._DefaultKey = GAFFKey
 
     @classmethod
     def fromFile(cls,fileName):
@@ -43,78 +83,51 @@ class GAFFParameterDict(STBADIDict):
         improperSection = gaffSection[4].splitlines()
         vdwSection = gaffSection[6].splitlines()[1:]
 
-        #construct dict from each section
-        typeDict = {}
-        for line in typeSection:
-            lineElements = line.split()
-            atype,amass,apol = lineElements[:3]
-            typeDesp = ' '.join(lineElements[3:])
-            amass = float(amass)
-            apol = float(apol)
-            typeDict[atype] = (amass,apol,typeDesp)
+        #construct dict from each section via the line2Dict routine
+        typeLineProcFunc = lambda items:(
+            GAFFKey(items[0]),  #atom type
+            float(items[1]),    #atomic mass
+            float(items[2]),    #atom polarizability
+            ' '.join(items[3:]) #atom type description
+                                         )
+        typeDict = line2Dict(typeSection,2,typeLineProcFunc)
 
-        bondDict = {}
-        for line in bondSection:
-            key = line[:5]
-            Kf,re = line[5:].split()[:2]
-            key = GAFFKey(key)
-            Kf = float(Kf)
-            re = float(re)
-            bondDict[key] = (Kf,re)
+        bondLineProcFunc = lambda items:(
+            GAFFKey(items[0]),  #bond type
+            float(items[1]),    #bond force constant, Kf
+            float(items[2]),    #bond equilibrium distance, re
+        )
+        bondDict = line2Dict(bondSection,5,bondLineProcFunc)
 
-        angleDict = {}
-        for line in angleSection:
-            key = line[:8]
-            Kt,te = line[8:].split()[:2]
-            key = GAFFKey(key)
-            Kt = float(Kt)
-            te = float(te)
-            angleDict[key] = (Kt,te)
+        angleLineProcFunc = lambda items:(
+            GAFFKey(items[0]),  #angle type
+            float(items[1]),    #angle force constant, Kt
+            float(items[2])     #Equilibrium angle, te
+        )
+        angleDict = line2Dict(angleSection,8,angleLineProcFunc)
 
-        dihedralDict = {}
-        for line in dihedralSection:
-            key = line[:12].strip()
-            div,Vn,gamma,n = line[12:].split()[:4]
-            key = GAFFKey(key)
-            div = float(div)
-            Vn = float(Vn)
-            gamma = float(gamma)
-            n = abs(float(n))
+        dihedralLineProcFunc = lambda items:(
+            GAFFKey(items[0]),      #dihedral type
+            float(items[1]),        #common divisor, div
+            float(items[2]),        #barrier height, Vn
+            float(items[3]),        #gamma
+            abs(float(items[4]))    #the period fold, n
+        )
+        dihedralDict = line2Dict(dihedralSection,12,dihedralLineProcFunc,
+                                 duplicateLines=True)
 
-            #one dihedral entry may have multiple series
-            if key in dihedralDict.keys():
-                dihedralDict[key].append((div,Vn,gamma,n))
-            else:
-                dihedralDict[key] = [(div,Vn,gamma,n)]
+        improperLineProcFunc = lambda items:(
+            GAFFKey(items[0]),  #improper type
+            float(items[1]),    #Vn
+            float(items[2]),    #gamma
+            float(items[3])     #n
+        )
+        improperDict = line2Dict(improperSection,12,improperLineProcFunc)
 
-        improperDict = {}
-        for line in improperSection:
-            key = line[:12].strip()
-            Vn,gamma,n = line[12:].split()[:3]
-            key = GAFFKey(key)
-            Vn = float(Vn)
-            gamma = float(gamma)
-            n = float(n)
-            improperDict[key] = (Vn,gamma,n)
-
-        vdwDict = {}
-        for line in vdwSection:
-            key,Re,sigma = line.split()[:3]
-            key = GAFFKey(key)
-            Re = float(Re)
-            sigma = float(sigma)
-            vdwDict[key] = (Re,sigma)
-
+        vdwLineProcFunc = lambda items:(
+            GAFFKey(items[0]),  #improper type
+            float(items[1]),    #Re
+            float(items[2]),    #sigma
+        )
+        vdwDict = line2Dict(vdwSection,2,vdwLineProcFunc)
         return cls(typeDict,bondDict,angleDict,dihedralDict,improperDict,vdwDict)
-
-    def find(self,key):
-        #if find an entry, return entry
-        #if multiple entry hits, find the one that has least wild cards
-        #otherwise return none
-        if type(key) is str:
-            gaffkey = GAFFKey(key)
-        else:
-            gaffkey = GAFFKey('-'.join(key))
-
-        result = super().find(gaffkey)
-        return result

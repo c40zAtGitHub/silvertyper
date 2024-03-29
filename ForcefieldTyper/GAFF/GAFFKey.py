@@ -1,6 +1,6 @@
-from ForcefieldTyper.STFFKey import FFAtomType
+from silvertyper.ForcefieldTyper.Dict.STFFAtomTypeLabel import STFFAtomTypeLabel
 
-class GAFFAtomType(FFAtomType):
+class GAFFAtomTypeLabel(STFFAtomTypeLabel):
     def __init__(self,typeStr = 'X'):
         super().__init__(typeStr)
     

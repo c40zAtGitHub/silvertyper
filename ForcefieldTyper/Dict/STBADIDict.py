@@ -1,24 +1,27 @@
 from __future__ import annotations
 
+from silvertyper.ForcefieldTyper.Dict.STFFKey import STFFKey
+
 #for type hints
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .STFFKey import STFFKey
 
 class STParaDictEntry:
-    def __init__(self,index:int,
-                 key:STFFKey,
-                 para:tuple|list[tuple]):
+    def __init__(self,index,key,para):
         self.index = index
         self.key = key
         self.para = para
 
-class STBADIDict:
-    def __init__(self,bondDict:dict,
-                 angleDict:dict,
-                 dihedralDict:dict,
-                 improperDict:dict):
-        
+class STBadiDict:
+    def __init__(self,
+                 bondDict,
+                 angleDict,
+                 dihedralDict,
+                 improperDict):
+        """
+        dicts are in key:STParaDictEntry format
+        """
         self.section = {
             'bond':bondDict,
             'angle':angleDict,
@@ -30,6 +33,9 @@ class STBADIDict:
             3:['angle'],
             4:['dihedral','improper']
         }
+        #ref to default key class that is used to
+        #establish entries when inserting data
+        self._DefaultKey = STFFKey     
 
     @classmethod
     def fromFile(cls,fileName):
@@ -39,11 +45,21 @@ class STBADIDict:
         """
         raise NotImplementedError
     
-    def find(self,key):
+    @property
+    def sectionNames(self):
+        return list(self.section.keys())
+    
+    def findall(self,key):
         """
         Search the key in all sections
+            key - string or instance of Key object
+        Returns a dict of hits in all sections
         """
+        if type(key) is str:
+            key = self._DefaultKey.fromString(key)
+        
         keyLength = len(key)
+
         result = {}
         try:
             targetSections = self.sectionOfKeyLength[keyLength]
@@ -75,5 +91,12 @@ class STBADIDict:
     @property
     def impropers(self):
         return self.section['improper'].values()
+    
+    def entries(self,sectionName,indices=None):
+        if indices is None:
+            #by default, all indices are fetched
+            return self.section[sectionName].values()
+        else:
+            return [entry for entry in self.section[sectionName].values() if entry.index in indices]
 
     
