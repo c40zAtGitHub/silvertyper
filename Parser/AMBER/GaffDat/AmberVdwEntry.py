@@ -2,15 +2,14 @@
 Line parser for atom type definition section
 """
 from .AmberEntry import AmberEntry
-from silvertyper.Parser.LineParser import LineParser
+from silvertyper.Parser.LineParser.BadiLineParser import VdWLineParser
 
 from silvertyper.Data.Label.FFTermLabel import FFTermLabel
-from silvertyper.Data.Label.AtomType.GaffAtomType import GaffAtomType as GaffLabel
+from silvertyper.Data.Label.AtomType.GaffAtomType import GAFFAtomType as GaffLabel
 from silvertyper.Data.Entry.FFPara.Pair import LJParaEntry
 
-class VdwEntry(AmberEntry,LineParser):
+class AmberVdwEntry(AmberEntry,VdWLineParser):
     _keyLength = 2
-    _attrLink = ["type","epsilon","re"]
     _strTemplate = "{}\t{:.4f}\t{:.4f}\t{}"
     def __init__(self,atype,re,eps,description):
         """
@@ -26,7 +25,7 @@ class VdwEntry(AmberEntry,LineParser):
         """
         AmberEntry.__init__(self,description)
         data = LJParaEntry(atype,eps,re)
-        LineParser.__init__(self,data)
+        VdWLineParser.__init__(self,data)
 
     def __str__(self):
         return self._strTemplate.format(
@@ -37,8 +36,8 @@ class VdwEntry(AmberEntry,LineParser):
         )
 
     @classmethod
-    def fromLine(cls,line):
-        key,elements = cls.keyElements(line)
+    def fromString(cls,entryString):
+        key,elements = cls.keyElements(entryString)
         btype = FFTermLabel(key,LabelType=GaffLabel)
         re = float(elements[0])
         eps = float(elements[1])

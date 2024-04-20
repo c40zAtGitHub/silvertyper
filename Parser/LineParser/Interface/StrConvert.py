@@ -1,4 +1,5 @@
 class StrConvertInterface:
+    _strTemplate = ""
     def __str__(self):
         raise NotImplementedError
     

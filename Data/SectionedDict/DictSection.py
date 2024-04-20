@@ -6,13 +6,6 @@ class EntryHolder:
     def __init__(self,entry):
         self.entry = entry
 
-    # def append(self,newEntry):
-    #     if isinstance(self.entry,list):
-    #         self.entry.append(newEntry)
-    #     else:
-    #         self.entry = [self.entry,newEntry]
-
-
 class Section:
     """
     Section that is efficient in query
@@ -39,11 +32,26 @@ class Section:
         if idType in self._supportedIndexType.keys():
             #for int or string input
             accessFunction = self._supportedIndexType[idType]
-            return accessFunction[identifier]
+            return accessFunction(identifier)
 
         elif isinstance(identifier,collections.abc.Iterable):
             #for list of indices or keys
             return self._itemByIterable(identifier)
+        
+        elif isinstance(identifier,slice):
+            start = identifier.start
+            stop = identifier.stop
+            step = identifier.step
+
+            if start is None:
+                start = 0
+            if stop is None:
+                stop = len(self)
+            if step is None:
+                step = 1
+
+            indices = [x for x in range(start,stop,step)]
+            return self._itemByIterable(indices)
         
         else:
             #for any concrete key objects
@@ -104,8 +112,16 @@ class Section:
     def keyOfIndex(self,index):
         return self._idxKey[index]
     
+    def keyOfEntry(self,entry):
+        return entry.type
+    
     def indexOfKey(self,key):
         return self._keyIdx[key]
+    
+    def indexOfEntry(self,entry):
+        key = self.keyOfEntry(entry)
+        index = self.indexOfKey(key)
+        return index
     
     def addEntry(self,key,newEntry):
         holder = EntryHolder(newEntry)

@@ -2,3 +2,4 @@ silvertyper.code-workspace
 .gitignore
 **/__pycache__/
 ignore/*
+test/*

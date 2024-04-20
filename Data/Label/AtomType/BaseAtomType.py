@@ -5,9 +5,6 @@ class BaseAtomType:
     def __hash__(self):
         return hash(self._type)
 
-    def __repr__(self):
-        return str(self)
-
     def __str__(self):
         return self._type
     
@@ -19,10 +16,18 @@ class BaseAtomType:
         return self._type == otherType._type
 
     def match(self,otherType):
-        if self.isWildcard or otherType.isWildcard:
+        if self.isWildcard:
             return True
-        elif self._type == otherType._type:
-            return True
+        
+        if isinstance(otherType,BaseAtomType):
+            if otherType.isWildcard:
+                return True     
+            elif self._type == otherType._type:
+                return True
+            
+        elif isinstance(otherType,str):
+            if self._type == otherType:
+                return True
         else:
             return False 
     

@@ -2,14 +2,13 @@
 Line parser for atom type definition section
 """
 from .AmberEntry import AmberEntry
-from silvertyper.Parser.LineParser import LineParser
+from silvertyper.Parser.LineParser.AtomMassLineParser import AtomMassPolarLineParser as AMPLineParser
 
-from silvertyper.Data.Label.AtomType.GaffAtomType import GaffAtomType as GaffLabel
+from silvertyper.Data.Label.AtomType.GaffAtomType import GAFFAtomType as GaffLabel
 from silvertyper.Data.Entry.FFPara.Mass import MassPolarParaEntry as MassPolarEntry
 
-class AmberMassEntry(AmberEntry,LineParser):
+class AmberMassEntry(AmberEntry,AMPLineParser):
     _keyLength = 2
-    _attrLink = ["type","mass","polarizability"]
     _strTemplate = "{}\t{:.4g}\t{:.3f}\t{}"
     def __init__(self, atype, mass, polarizability, description=None):
         """
@@ -20,7 +19,7 @@ class AmberMassEntry(AmberEntry,LineParser):
         """
         AmberEntry.__init__(self,description)
         data = MassPolarEntry(atype, mass, polarizability)
-        LineParser.__init__(self,data)
+        AMPLineParser.__init__(self,data)
         
 
     def __str__(self):
@@ -32,8 +31,8 @@ class AmberMassEntry(AmberEntry,LineParser):
             )
         
     @classmethod
-    def fromLine(cls,line):
-        key,elements = cls.keyElements(line)
+    def fromString(cls,entryString):
+        key,elements = cls.keyElements(entryString)
         atype = GaffLabel(key)
         amass = float(elements[0])
         apol = float(elements[1])

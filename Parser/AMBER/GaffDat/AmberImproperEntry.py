@@ -4,7 +4,7 @@ Line parser for improper parameter section
 from .AmberEntry import AmberEntry
 from silvertyper.Parser.LineParser.BadiLineParser import FourierImproperLineParser
 
-from silvertyper.Data.Label.AtomType.GaffAtomType import GaffAtomType as GaffLabel
+from silvertyper.Data.Label.AtomType.GaffAtomType import GAFFAtomType as GaffLabel
 from silvertyper.Data.Label.FFTermLabel import FFTermLabel
 from silvertyper.Data.Entry.FFPara import FourierParaEntry as FourierEntry
 
@@ -37,8 +37,8 @@ class AmberImproperEntry(AmberEntry,FourierImproperLineParser):
         )
 
     @classmethod
-    def fromLine(cls,line):
-        key,elements = cls.keyElements(line)
+    def fromString(cls,entryString):
+        key,elements = cls.keyElements(entryString)
         dtype = FFTermLabel(key,LabelType=GaffLabel)
         Vn = float(elements[0])
         gamma = float(elements[1])

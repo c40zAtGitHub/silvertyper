@@ -1,7 +1,10 @@
+from . import link_attributes
 from .LineParser import LineParser
 
+@link_attributes
 class AtomicLineParser(LineParser):
-    _attrLink = ["type","x","y","z"]
+    _attributes = ["type","x","y","z"]
 
+@link_attributes
 class ChargeLineParser(LineParser):
-    _attrLink = ["type","x","y","z","charge","q"]
+    _attributes = ["type","x","y","z","charge","q"]

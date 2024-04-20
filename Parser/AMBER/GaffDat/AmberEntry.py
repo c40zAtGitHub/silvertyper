@@ -11,6 +11,8 @@ class AmberEntry:
 
     @classmethod 
     def keyElements(cls,line):
+        line = line.strip()
         key = line[:cls._keyLength]
+        key = key.strip()
         elements = line[cls._keyLength:].split()
         return (key,elements)

@@ -4,7 +4,7 @@ Line parser for bond parameter section
 from .AmberEntry import AmberEntry
 from silvertyper.Parser.LineParser.BadiLineParser import BondLineParser
 
-from silvertyper.Data.Label.AtomType.GaffAtomType import GaffAtomType as GaffLabel
+from silvertyper.Data.Label.AtomType.GaffAtomType import GAFFAtomType as GaffLabel
 from silvertyper.Data.Label.FFTermLabel import FFTermLabel
 from silvertyper.Data.Entry.FFPara import HarmonicParaEntry as HarmonicEntry
 
@@ -32,8 +32,8 @@ class AmberBondEntry(AmberEntry,BondLineParser):
         )
 
     @classmethod
-    def fromLine(cls,line):
-        key,elements = cls.keyElements(line)
+    def fromString(cls,entryString):
+        key,elements = cls.keyElements(entryString)
         btype = FFTermLabel(key,LabelType=GaffLabel)
         Kr = float(elements[0])
         re = float(elements[1])
