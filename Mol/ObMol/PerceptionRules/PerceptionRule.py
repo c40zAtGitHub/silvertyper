@@ -1,8 +1,8 @@
 from openbabel import openbabel as ob
 
-class OBMolBondingRule:
+class PerceptionRule:
     """
-    Base rule interface used for STRuledMolConverter that defines
+    Base rule interface used by Mol that defines
     the bond forming behavior of different portion of an obmol system
     """
     def __init__(self):

@@ -1,10 +1,10 @@
 import networkx as nx
 
-from .MolGraphIter import SerialMGIter
+from .Iterator.AtomIter import SerialAtomIter
 
 from silvertyper.Utilities.AtomicMassData import atomSymbols
 
-class AtomEntry:
+class GraphMolAtom:
 
     def __init__(self,
                  anum,
@@ -21,7 +21,7 @@ class AtomEntry:
         else:
             self.charge = charge
 
-class MolGraph:
+class GraphMol:
     def __init__(self):
         self._graph = nx.Graph()
 
@@ -33,7 +33,7 @@ class MolGraph:
 
     #data insertion
     def addAtom(self,aIndex,aNum,atype=None,charge=None):
-        newEntry = AtomEntry(aNum,atype=atype,charge=charge)
+        newEntry = GraphMolAtom(aNum,atype=atype,charge=charge)
         self._graph.add_node(aIndex,data=newEntry)
 
     def addBond(self,aIndex1,aIndex2):
@@ -46,7 +46,7 @@ class MolGraph:
     
     @property
     def atoms(self):
-        return SerialMGIter(self)
+        return SerialAtomIter(self)
 
     @property
     def bonds(self):

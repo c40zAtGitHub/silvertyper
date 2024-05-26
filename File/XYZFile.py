@@ -1,8 +1,10 @@
 import os
 
+from .FileInterface import File
+
 from silvertyper.Utilities.AtomicMassData import atomSymbols
 
-class XYZFile(object):
+class XYZFile(File):
     def __init__(self,nAtom,title,atomCoords):
         self.nAtom = nAtom
         self.title = title

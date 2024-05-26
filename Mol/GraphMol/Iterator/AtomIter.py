@@ -5,10 +5,10 @@ from collections import deque
 #for type hints
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .MolGraph import MolGraph
+    from ..GraphMol import GraphMol
     
-class SerialMGIter:
-    def __init__(self,parent : MolGraph):
+class SerialAtomIter:
+    def __init__(self,parent : GraphMol):
         self.parent = parent
 
     def __iter__(self):
@@ -24,7 +24,7 @@ class SerialMGIter:
             self.cur += 1
             return data
         
-class BFSFloodMGIter:
+class BFSAtomIter:
     """
         A custom bfs iterator over nodes of MolGraph
         starting with certain node indices initialized
@@ -34,12 +34,11 @@ class BFSFloodMGIter:
         two fragments
     """
     def __init__(self,
-                 graph : MolGraph,
+                 gmol : GraphMol,
                  startIndices : list[int]):
-        self._graph = graph
+        self._gmol = gmol
         self._visited = list(startIndices)
         self._dq = deque(startIndices)
-        pass
 
     def __iter__(self):
         return self

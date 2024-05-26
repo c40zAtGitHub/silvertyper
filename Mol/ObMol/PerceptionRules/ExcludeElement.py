@@ -1,7 +1,7 @@
 from silvertyper.Utilities.AtomicMassData import atomSymbols
-from .OBMolBondingRule import OBMolBondingRule as OBMBRule
+from .PerceptionRule import PerceptionRule
 
-class OBMBExcludeElement(OBMBRule):
+class ExcludeElement(PerceptionRule):
     """
     Omits bond formation among atoms of certain element
     """

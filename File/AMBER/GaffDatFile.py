@@ -1,4 +1,6 @@
-class GaffDatFile:
+from ..FileInterface import File
+
+class GaffDatFile(File):
     def __init__(self,typeSection,
                  bondSection,
                  angleSection,
@@ -31,5 +33,9 @@ class GaffDatFile:
                    improperSection,
                    vdwSection)
     
+    @classmethod
+    def fromStream(cls,fileContent):
+        raise NotImplementedError
+    
     def toStream(self):
-        pass
+        raise NotImplementedError

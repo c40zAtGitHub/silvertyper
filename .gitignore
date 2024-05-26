@@ -1,5 +1,6 @@
-silvertyper.code-workspace
+.silvertyper.code-workspace
 .gitignore
 **/__pycache__/
 ignore/*
 test/*
+.vscode/launch.json

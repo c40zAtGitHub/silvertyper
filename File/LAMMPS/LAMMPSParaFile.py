@@ -1,6 +1,7 @@
 import os
+from ..FileInterface import File
 
-class LAMMPSParameterFile:
+class LAMMPSParameterFile(File):
     _symbolDefLineTemp = "labelmap\t{idType}\t{numID}\t{strID}"
     def __init__(self,
                  bonds,
@@ -16,10 +17,6 @@ class LAMMPSParameterFile:
         self.impropers = impropers
         self.pairs = pairs
 
-    @classmethod
-    def fromFileStream(cls,fileStream):
-        pass
-
     def __str__(self):
         sep = os.linesep
         bondLines = sep.join(self.bonds)
@@ -29,3 +26,10 @@ class LAMMPSParameterFile:
         pairLines = sep.join(self.pairs)
         fileContent = sep.join([bondLines,angleLines,dihedralLines,improperLines,pairLines])
         return fileContent
+    
+    @classmethod
+    def fromStream(cls,fileContent):
+        raise NotImplementedError
+    
+    def toStream(self):
+        raise NotImplementedError

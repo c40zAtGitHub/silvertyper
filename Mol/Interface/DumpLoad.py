@@ -1,5 +1,5 @@
 import pickle
-class DumpLoadMixin:
+class DumpLoad:
     """
     Grant the class ability to:
     1. dump its instances as a binary file

@@ -1,6 +1,6 @@
 from openbabel import openbabel as ob
 
-class OBMolSyncronizer:
+class ObMolSyncronizer:
 
     def __init__(self,
                  srcMol: ob.OBMol,

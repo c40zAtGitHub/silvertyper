@@ -1,6 +1,7 @@
 import os
+from ..FileInterface import File
 
-class LAMMPSDataFile:
+class LAMMPSDataFile(File):
     _fileTemplate = """LAMMPS Data File
 
     {natm}  atoms
@@ -124,5 +125,8 @@ Impropers
         return fileString
 
     @classmethod
-    def fromFileStream(self,fileStream):
-        pass
+    def fromStream(cls,fileContent):
+        raise NotImplementedError
+    
+    def toStream(self):
+        raise NotImplementedError
